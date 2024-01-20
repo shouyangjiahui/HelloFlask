@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>数据显示</title>
+    <link href="/static/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+         .navbar-brand{
+            color: #fff;
+         }
+         .navbar-brand{
+            /* 字间距 */
+            letter-spacing: 8px;
+            outline: none;
+            /* 自定义属性 --c,可通过 var 函数对其调用 */
+            --c:lightseagreen;
+            /* 调用自定义属性--c，设置文字阴影（发光效果） */
+            text-shadow: 0 0 10px var(--c),
+            0 0 20px var(--c),
+            0 0 40px var(--c),
+            0 0 80px var(--c),
+            0 0 160px var(--c);
+            /* 执行动画：动画名 时长 线性的 无限次播放 */
+            animation: animate 5s linear infinite;
+        }
+        /* 定义动画 */
+        @keyframes animate{
+            to{
+                /* 色相旋转过滤镜（设置度数可改变颜色） */
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        .navbar-quit {
+            float: right;
+            margin-top: 15px;
+        }
+
+        .producer-list {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f5f5f5;
+            padding: 10px;
+        }
+
+        .horizontal-list {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+        }
+
+        .horizontal-list li {
+            margin: 0 5px;
+        }
+
+        .alert-custom {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        #msg {
+            position: absolute;
+            text-align: center;
+            padding: 20px;
+            top: 60%;
+            left: 50%;
+            width: 400px;
+            height: 50px;
+            transition: opacity 10s;
+            background-color: lightyellow;
+            font-family: "楷体";
+            color: red;
+            font-size: 15px;
+            font-weight: bold;
+        }
+    </style>
+    <script src="/static/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"> 学生信息管理系统 </a>
+            </div>
+            <div class="navbar-quit">
+                <a class="btn btn-danger btn-xs" href="/quit">退出登录</a>
+            </div>
+        </div>
+        {% if msg != '' %}
+        <div id="msg" style="display:flex;">
+            {{ msg }}
+        </div>
+        {% else %}
+        <div id="msg" style="display:none;">
+            {{ msg }}
+        </div>
+        {% endif %}
+    </nav>
+
+    <div class="container">
+        <br />
+        <div class="row text-center">
+            <form method="get">
+                姓名：<input type="text" name="stu_name" value="{{ stu_name }}" />
+                学号：<input type="text" name="stu_id" value="{{ stu_id }}" />
+                <input type="submit" value="查询" class="btn btn-primary btn-sm" />
+                <a href="/charts" class="btn btn-primary" style="float:right; background-color:	#FF7F50;">
+                    专业人数统计图
+                </a>
+            </form>
+        </div>
+        <br/>
+
+        <form action="/operations" method="post">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row text-center">数据列表</div>
+                </div>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            {% for a in fields %}
+                            <th class="text-center">{{ a }}</th>
+                            {% endfor %}
+                            <th class="text-center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in datas %}
+                    <tr>
+                        <td class="text-center">
+                            <input type="checkbox" name="checked_sno" value="{{item[0]}}" />
+                        </td>
+                        {% for a in item %}
+                        <td class="text-center">{{ a }}</td>
+                        {% endfor %}
+                        <td class="text-center">
+                            <a class="btn btn-primary btn-xs" href="update?stu_id={{ item[0] }}">修改</a>
+                            <a class="btn btn-danger btn-xs" href="del2/{{ item[0] }}">删除</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row text-center" style="margin-top: 50px">
+                <a class="btn btn-success" href="/add">添加记录</a>
+                <input class="btn btn-success" type="submit" value="批量删除" name="action" />
+                <a class="btn btn-success" href="/update_age">批量修改年龄</a>
+                <a class="btn btn-success" href="/update_profession">批量修改专业</a>
+                <a class="btn btn-success" href="/goprofession">添加专业</a>
+            </div>
+            <br />
+        </form>
+
+        <div style="text-align: center">
+            <!-- 通过 Excel 批量添加数据 -->
+            <form method="POST" action="/add_by_excel" enctype="multipart/form-data">
+                <div class="form-row align-items-center">
+                    <label for="file" class="sr-only">选择 Excel 文件：</label>
+                    <input type="file" class="form-control-file" style="display: inline-block" name="file" id="file" accept=".xlsx">
+                    <div>
+                        <input type="submit" class="btn btn-primary" style="display: inline-block" value="上传 Excel 文件并添加数据">
+                        <a class="btn btn-primary" style="margin-left:25px" href="export_to_excel">以Excel 文件导出</a>
+                    </div>
+                </div>
+            </form>
+            <br>
+        </div>
+
+        <div class="row text-center">
+            <div class="pagination">
+                {% if page > 1 %}
+                <label>
+                    <a href="{{ url_for('index', page=1, per_page=per_page, stu_name=stu_name, stu_id=stu_id) }}">&laquo;
+                        First</a>
+                </label>
+                <label>
+                    <a href="{{ url_for('index', page=page-1, per_page=per_page, stu_name=stu_name, stu_id=stu_id) }}">&lsaquo;
+                        Previous</a>
+                </label>
+                {% else %}
+                <label>&laquo; First</label>
+                <label>&lsaquo; Previous</label>
+                {% endif %} {% for p in range(1, total_pages + 1) %} {% if page == p %}
+                <label><span class="current-page">{{ p }}</span></label>
+                {% else %}
+                <label><a href="{{ url_for('index', page=p, per_page=per_page, stu_name=stu_name, stu_id=stu_id) }}">{{
+                        p }}</a></label>
+                {% endif %} {% endfor %} {% if page < total_pages %} <label>
+                    <a
+                        href="{{ url_for('index', page=page + 1, per_page=per_page, stu_name=stu_name, stu_id=stu_id) }}">Next
+                        &rsaquo;</a>
+                    </label>
+                    <label><a
+                            href="{{ url_for('index', page=total_pages, per_page=per_page, stu_name=stu_name, stu_id=stu_id) }}">Last
+                            &raquo;</a></label>
+                    {% else %}
+                    <label>Next &rsaquo;</label>
+                    <label>Last &raquo;</label>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer text-center">
+        <hr />
+
+        <div class="producer-list">
+            <ul class="list-unstyled horizontal-list">
+                <p>小组成员：</p>
+                <li></li>
+                <li>张安森</li>
+                <li>李嘉辉</li>
+                <li>季柏旭</li>
+                <li>刘健祥</li>
+                <li>张迪克</li>
+                <li>王瑞阳</li>
+                <li>牛丙钊</li>
+            </ul>
+        </div>
+    </div>
+    <div class="alert alert-custom text-center">
+        {% with messages = get_flashed_messages() %} {% if messages %} {{
+        messages[0] }} {% endif %} {% endwith %}
+    </div>
+</body>
+<script>
+    (function removemessage() {
+        var msg = document.getElementById("msg");
+        setTimeout(() => {
+            msg.style.opacity = 0; // 将透明度设置为 0，开始渐变消失
+            setTimeout(() => {
+                msg.style.display = "none"; // 2秒后将元素隐藏
+            }, 3000);
+        }, 0); // 延迟 0 毫秒后执行透明度设置
+    })();
+
+    // 页面背景几何动画
+    !function () {
+        function n(n, e, t) {
+            return n.getAttribute(e) || t
+        }
+     
+        function e(n) {
+            return document.getElementsByTagName(n)
+        }
+     
+        function t() {
+            var t = e("script"), o = t.length, i = t[o - 1];
+            return {l: o, z: n(i, "zIndex", -1), o: n(i, "opacity", .5), c: n(i, "color", "0,0,0"), n: n(i, "count", 99)}
+        }
+     
+        function o() {
+            a = m.width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth, c = m.height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+        }
+     
+        function i() {
+            r.clearRect(0, 0, a, c);
+            var n, e, t, o, m, l;
+            s.forEach(function (i, x) {
+                for (i.x += i.xa, i.y += i.ya, i.xa *= i.x > a || i.x < 0 ? -1 : 1, i.ya *= i.y > c || i.y < 0 ? -1 : 1, r.fillRect(i.x - .5, i.y - .5, 1, 1), e = x + 1; e < u.length; e++) n = u[e], null !== n.x && null !== n.y && (o = i.x - n.x, m = i.y - n.y, l = o * o + m * m, l < n.max && (n === y && l >= n.max / 2 && (i.x -= .03 * o, i.y -= .03 * m), t = (n.max - l) / n.max, r.beginPath(), r.lineWidth = t / 2, r.strokeStyle = "rgba(" + d.c + "," + (t + .2) + ")", r.moveTo(i.x, i.y), r.lineTo(n.x, n.y), r.stroke()))
+            }), x(i)
+        }
+     
+        var a, c, u, m = document.createElement("canvas"), d = t(), l = "c_n" + d.l, r = m.getContext("2d"),
+            x = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (n) {
+                window.setTimeout(n, 1e3 / 45)
+            }, w = Math.random, y = {x: null, y: null, max: 2e4};
+        m.id = l, m.style.cssText = "position:fixed;top:0;left:0;z-index:" + d.z + ";opacity:" + d.o, e("body")[0].appendChild(m), o(), window.onresize = o, window.onmousemove = function (n) {
+            n = n || window.event, y.x = n.clientX, y.y = n.clientY
+        }, window.onmouseout = function () {
+            y.x = null, y.y = null
+        };
+        for (var s = [], f = 0; d.n > f; f++) {
+            var h = w() * a, g = w() * c, v = 2 * w() - 1, p = 2 * w() - 1;
+            s.push({x: h, y: g, xa: v, ya: p, max: 6e3})
+        }
+        u = s.concat([y]), setTimeout(function () {
+            i()
+        }, 100)
+    }();
+</script>
+
+</html>

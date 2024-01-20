@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>插入数据</title>
+    <link href="/static/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .account {
+            width: 400px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            box-shadow: 5px 5px 20px #aaa;
+
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 100px;
+            padding: 20px 40px;
+        }
+
+        .account h2 {
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+        <!-- <script src="/static/bootstrap/3.2.0/js/bootstrap.min.js"></script> -->
+    <script>
+        function validateForm() {
+            const stu_id = document.forms["form1"]["stu_id"].value;
+            const stu_name = document.forms["form1"]["stu_name"].value;
+            const stu_age = document.forms["form1"]["stu_age"].value;
+            const stu_origin = document.forms["form1"]["stu_origin"].value;
+
+            // 学号必须为9位数字
+            const idRegex = /^\d{9}$/;
+            if (stu_id === "" || !idRegex.test(stu_id)) {
+                alert("学号不能为空 或 学号必须取9位数字");
+                return false;
+            }
+
+            const nameRegex = /^[\u4e00-\u9fa5a-zA-Z]{1,20}$/;
+            if (stu_name === "" || !nameRegex.test(stu_name)) {
+                alert("姓名不能为空 或 姓名必须取不超过20位汉字或英语字母");
+                return false;
+            }
+
+            const ageRegex = /^[1-9][0-9]?$|^1[01][0-9]$/
+            if ((stu_age === "" || isNaN(stu_age)) || !ageRegex.test(stu_age) || stu_age <= 0 || stu_age >= 120) {
+                alert("年龄必须是数字 且 位于1~120区间");
+                return false;
+            }
+
+            if (stu_origin === "") {
+                alert("籍贯不能为空");
+                return false;
+            }
+
+        }
+    </script>
+</head>
+
+<body>
+    <div class="account">
+            <div class="text-center">
+                <h2>添加学生记录</h2>
+            </div>
+
+            <form class="form-horizontal" id="form1" name="form1" method="post" action="/add" onsubmit="return validateForm()">
+                <br>
+                <div class="form-group">
+                    <label class="control-label col-sm-4">学号：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" name="stu_id" id="username" type="text" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-4">姓名：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" name="stu_name" id="username" type="text" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-4">性别：</label>
+                    <div class="col-sm-8">
+                        <input name="stu_sex" type="radio" value="男" checked="checked" />
+                        男
+                        <input type="radio" name="stu_sex" value="女" />
+                        女
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-4">年龄：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" name="stu_age" id="username" type="text" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-4">籍贯：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" name="stu_origin" id="username" type="text" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-4">专业：</label>
+                    <div class="col-sm-8">
+                        <select name="stu_profession">
+                            {% for pro in datas %}
+                            <option value='{{ pro[0] }}'> {{ pro[1] }} </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group text-center">
+                    <input class="btn btn-primary" type="submit" name="button" value="提交" />
+                    <input class="btn btn-danger" type="reset" name="button2" value="重置" />
+                    <br />
+                </div>
+
+            </form>
+            
+    </div>
+
+</body>
+
+
+</html>

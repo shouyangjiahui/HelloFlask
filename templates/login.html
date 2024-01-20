@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link href="/static/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+    <style>
+        #bg-video {
+            position: fixed;
+            bottom: 0;
+            top: 0;
+            left: -190px;
+            width: 130%;
+            height: 130%;
+            z-index: -1;
+            text-align: center;
+        }
+
+        .icon {
+            height: 100px;
+            padding: 20px;
+        }
+
+        .account {
+            width: 350px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 5px 5px 20px #aaa;
+            background: rgba(75, 109, 143, 0.1);
+            margin: 60px auto 0;
+            padding: 10px 40px;
+            transition: background 0.3s;
+        }
+
+        .account:hover {
+            background: linear-gradient(to right top, rgba(147, 146, 146, 0.3), rgba(173, 172, 172, 0.8));
+        }
+
+        .account h2 {
+            margin-top: 10px;
+            text-align: center;
+            text-shadow: 0 0 10px rgb(0, 157, 255), 0 0 20px rgb(0, 102, 255), 0 0 30px rgb(0, 225, 255), 0 0 40px rgb(0, 51, 255);
+        }
+
+        .fa {
+            display: inline-block;
+            top: 27px;
+            left: 6px;
+            position: relative;
+            color: rgba(0, 0, 0, 0.605);
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding-left: 26px;
+            border-radius: 20px;
+            background: linear-gradient(to right top, rgba(192, 159, 159, 0.1), rgba(251, 233, 233, 0.1));
+            color: #2f2d2d;
+            border-width: 1.5px;
+            border-color: rgb(225, 225, 245);
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            padding-left: 26px;
+            border-radius: 20px;
+            background: linear-gradient(to right top, rgba(216, 213, 213, 0.1), rgba(181, 173, 173, 0.1));
+            box-shadow: 0 0 5px 0px blue;
+        }
+
+        .input-with-icon {
+            position: relative;
+            margin-left: 40px;
+        }
+
+        .input-with-icon .captcha-img {
+            position: absolute;
+            top: 0;
+            left: 140px;
+            cursor: pointer;
+            margin-top: 7.5px;
+        }
+
+        .btn-primary {
+            width: 120px;
+            background-image: linear-gradient(to right, #2e71e4, #199ed3);
+        }
+
+        .btn-primary:hover {
+            background-image: linear-gradient(to right, #0c357d, #12495f);
+        }
+
+        input[type="text"]::placeholder,
+        input[type="password"]::placeholder,
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.902); 
+        }
+    </style>
+    <script src="/static/bootstrap/3.2.0/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <video autoplay muted loop id="bg-video">
+        <source src="/static/img/Terre.mp4" type="video/mp4">
+    </video>
+
+    <div class="icon">
+        <img src="/static/img/logo.png" style="width:200px;height: 50px; margin-left: 30px;">
+    </div>
+
+    <div class="account">
+        <div class="text-center">
+            <h2>用户登录</h2>
+        </div>
+
+        <form class="form-horizontal" action="login" method="post">
+            <div class="row">
+                <div class="col-sm-9 col-md-9">
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                            <input class="form-control required" type="text" name="username" id="username" value="{{ username }}" placeholder="请输入用户名" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-9 col-md-9">
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fa fa-key" aria-hidden="true"></i>
+                            <input class="form-control required" type="password" name="pwd" id="pwd" value="{{ password }}" placeholder="请输入密码" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-9 col-md-9">
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fa fa-shield" aria-hidden="true"></i>
+                            <input class="form-control required" name="captcha_input" id="captcha_input" type="text" placeholder="请输入验证码" required style="width:130px">
+                            <img src="/code" class="captcha-img" onclick="updateCaptcha()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row text-center">
+                <div class="col-sm-9 col-md-9 ">
+                    <div class="form-group ">
+                        <div>
+                            {% if error %}
+                            <p style="color: red;">{{ error }}</p>
+                            {% endif %}
+                        </div>
+                        <div style="margin-left: 40px;">
+                            <input type="submit" value="登录" class="btn btn-primary pull-left ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        function updateCaptcha() {
+            var captchaImg = document.querySelector('.captcha-img');
+            captchaImg.src = '/code?' + Math.random();
+        }
+    </script>
+
+</body>
+
+</html>

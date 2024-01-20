@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>ECharts</title>
+  <!-- 引入刚刚下载的 ECharts 文件 -->
+  <script src="/static/echarts.min.js"></script>
+</head>
+<style>
+  #main {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .button-container {
+    z-index: 1000;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-decoration: none;
+  }
+
+  .button-container a {
+    text-decoration: none;
+    /* 移除链接的下划线 */
+  }
+
+  .button-container button {
+    font-size: 1.2em;
+    /* 调整字体大小 */
+    font-weight: bold;
+    /* 加粗字体 */
+    color: white;
+    /* 文字颜色为白色 */
+    background: linear-gradient(to right,
+        #ff7e5f,
+        #feb47b);
+    /* 背景色为渐变色 */
+    border: none;
+    /* 移除边框 */
+    border-radius: 25px;
+    /* 边框为圆角 */
+    padding: 10px 20px;
+    /* 增加内边距 */
+    transition: background 0.3s ease;
+    /* 添加背景颜色过渡效果 */
+  }
+
+  .button-container button:hover {
+    background: linear-gradient(to right,
+        #feb47b,
+        #ff7e5f);
+    /* 鼠标悬停时修改背景色 */
+  }
+</style>
+
+<body>
+
+  <div id="dataid" d="{{data}}" style="display: none"></div>
+  <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+  <div id="main" style="width: 600px; height: 400px"></div>
+  <div class="button-container" style="width: max-content; margin-left: auto; margin-right: auto">
+    <a href="/">
+      <button>返回</button>
+    </a>
+  </div>
+  <script type="text/javascript">
+
+    var js_data = document.getElementById('dataid').getAttribute('d');
+    var data = JSON.parse(js_data); // 从 Flask 获取数据
+    // print('data=',data);
+    console.log(data);
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById("main"));
+
+    var option = {
+      title: {
+        text: "专业人数统计",
+        left: "center",
+        top: "bottom",
+      },
+      tooltip: {
+        trigger: "item",
+      },
+      legend: {
+        orient: "vertical",
+        left: 10,
+      },
+      series: [
+        {
+          type: "pie",
+          data: data, // 使用从 Flask 获取的数据
+        },
+      ],
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+  </script>
+</body>
+
+</html>
